@@ -4,22 +4,28 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LevelMoves : LevelCondition
+public class LevelMoves : LevelCondition 
 {
+    int m_movesLimit;
     private int m_moves;
 
     private BoardController m_board;
 
-    public override void Setup(float value, Text txt, BoardController board)
+    public override void Setup(float value, Text txt, params object[] args)
     {
         base.Setup(value, txt);
 
-        m_moves = (int)value;
+        m_moves = m_movesLimit = (int)value;
 
-        m_board = board;
+        m_board = (BoardController)args[0];
 
         m_board.OnMoveEvent += OnMove;
 
+        UpdateText();
+    }
+
+    public override void Reset() {
+        m_moves = m_movesLimit;
         UpdateText();
     }
 
@@ -39,7 +45,7 @@ public class LevelMoves : LevelCondition
 
     protected override void UpdateText()
     {
-        m_txt.text = string.Format("MOVES:\n{0}", m_moves);
+        m_txt.text = $"MOVES:\n{m_moves}";
     }
 
     protected override void OnDestroy()

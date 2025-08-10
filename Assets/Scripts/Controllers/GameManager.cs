@@ -44,6 +44,8 @@ public class GameManager : MonoBehaviour
     private UIMainManager m_uiMenu;
 
     private LevelCondition m_levelCondition;
+    
+    eLevelMode m_levelMode;
 
     private void Awake()
     {
@@ -83,26 +85,44 @@ public class GameManager : MonoBehaviour
 
     public void LoadLevel(eLevelMode mode)
     {
+        m_levelMode = mode;
+        
         if (m_boardController == null) {
             m_boardController = new GameObject("BoardController").AddComponent<BoardController>();
             m_boardController.Initialize(this, m_gameSettings);
         }
         m_boardController.StartGame();
+        SetLevelCondition();
 
-        if (mode == eLevelMode.MOVES)
+        State = eStateGame.GAME_STARTED;
+    }
+
+    public void RestartLevel() {
+        if (State == eStateGame.GAME_STARTED) {
+            m_boardController.RestartGame();
+            m_levelCondition.Reset();   
+        }
+        else if (State == eStateGame.GAME_OVER) {
+            m_boardController.RestartGame();
+            SetLevelCondition();
+            
+            State = eStateGame.GAME_STARTED;
+        }
+    }
+
+    void SetLevelCondition() {
+        if (m_levelMode == eLevelMode.MOVES)
         {
             m_levelCondition = this.gameObject.AddComponent<LevelMoves>();
             m_levelCondition.Setup(m_gameSettings.LevelMoves, m_uiMenu.GetLevelConditionView(), m_boardController);
         }
-        else if (mode == eLevelMode.TIMER)
+        else if (m_levelMode == eLevelMode.TIMER)
         {
             m_levelCondition = this.gameObject.AddComponent<LevelTime>();
             m_levelCondition.Setup(m_gameSettings.LevelTime, m_uiMenu.GetLevelConditionView(), this);
         }
 
         m_levelCondition.ConditionCompleteEvent += GameOver;
-
-        State = eStateGame.GAME_STARTED;
     }
 
     public void GameOver()

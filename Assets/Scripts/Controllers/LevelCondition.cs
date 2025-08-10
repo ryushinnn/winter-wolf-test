@@ -12,20 +12,12 @@ public class LevelCondition : MonoBehaviour
 
     protected bool m_conditionCompleted = false;
 
-    public virtual void Setup(float value, Text txt)
+    public virtual void Setup(float value, Text txt, params object[] args)
     {
         m_txt = txt;
     }
 
-    public virtual void Setup(float value, Text txt, GameManager mngr)
-    {
-        m_txt = txt;
-    }
-
-    public virtual void Setup(float value, Text txt, BoardController board)
-    {
-        m_txt = txt;
-    }
+    public virtual void Reset() { }
 
     protected virtual void UpdateText() { }
 

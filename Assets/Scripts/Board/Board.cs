@@ -20,6 +20,7 @@ public class Board
     private int boardSizeY;
 
     private Cell[,] m_cells;
+    NormalItem.eNormalType[,] originalTypes;
 
     private Transform m_root;
 
@@ -35,6 +36,7 @@ public class Board
         this.boardSizeY = gameSettings.BoardSizeY;
 
         m_cells = new Cell[boardSizeX, boardSizeY];
+        originalTypes = new NormalItem.eNormalType[boardSizeX, boardSizeY];
 
         CreateBoard();
     }
@@ -95,7 +97,25 @@ public class Board
                     }
                 }
 
-                item.SetType(Utils.GetRandomNormalTypeExcept(types.ToArray()));
+                var type = Utils.GetRandomNormalTypeExcept(types.ToArray());
+                originalTypes[x, y] = type;
+                item.SetType(type);
+                item.SetView();
+                item.SetViewRoot(m_root);
+
+                cell.Assign(item);
+                cell.ApplyItemPosition(false);
+            }
+        }
+    }
+
+    public void Reset() {
+        for (int x = 0; x < boardSizeX; x++) {
+            for (int y = 0; y < boardSizeY; y++) {
+                Cell cell = m_cells[x, y];
+                cell.Clear();
+                NormalItem item = new NormalItem();
+                item.SetType(originalTypes[x, y]);
                 item.SetView();
                 item.SetViewRoot(m_root);
 

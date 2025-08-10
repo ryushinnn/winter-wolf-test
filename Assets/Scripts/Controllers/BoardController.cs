@@ -46,9 +46,20 @@ public class BoardController : MonoBehaviour
         Fill();
     }
 
+    public void RestartGame() {
+        m_gameOver = false;
+        StopHints();
+        ResetBoard();
+    }
+
     private void Fill()
     {
         m_board.Fill();
+        FindMatchesAndCollapse();
+    }
+    
+    void ResetBoard() {
+        m_board.Reset();
         FindMatchesAndCollapse();
     }
 
