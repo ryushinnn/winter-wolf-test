@@ -124,7 +124,7 @@ public class GameManager : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
-        yield return new WaitForSeconds(1f);
+        yield return BetterWaitForSeconds.Wait(1f);
 
         State = eStateGame.GAME_OVER;
 
