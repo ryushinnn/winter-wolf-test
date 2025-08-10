@@ -81,8 +81,7 @@ public class Board
                 List<NormalItem.eNormalType> types = new List<NormalItem.eNormalType>();
                 if (cell.NeighbourBottom != null)
                 {
-                    NormalItem nitem = cell.NeighbourBottom.Item as NormalItem;
-                    if (nitem != null)
+                    if (cell.NeighbourBottom.Item is NormalItem nitem)
                     {
                         types.Add(nitem.ItemType);
                     }
@@ -90,8 +89,7 @@ public class Board
 
                 if (cell.NeighbourLeft != null)
                 {
-                    NormalItem nitem = cell.NeighbourLeft.Item as NormalItem;
-                    if (nitem != null)
+                    if (cell.NeighbourLeft.Item is NormalItem nitem)
                     {
                         types.Add(nitem.ItemType);
                     }
