@@ -14,19 +14,8 @@ public class Item
 
     public virtual void SetView()
     {
-        string prefabname = GetPrefabName();
-
-        if (!string.IsNullOrEmpty(prefabname))
-        {
-            GameObject prefab = Resources.Load<GameObject>(prefabname);
-            if (prefab)
-            {
-                View = GameObject.Instantiate(prefab).transform;
-            }
-        }
+        View = BoardResources.GetItemView();
     }
-
-    protected virtual string GetPrefabName() { return string.Empty; }
 
     public virtual void SetCell(Cell cell)
     {
@@ -96,12 +85,12 @@ public class Item
 
     internal virtual void ExplodeView()
     {
-        if (View)
-        {
+        if (View) {
+            var originScale = View.localScale;
             View.DOScale(0.1f, 0.1f).OnComplete(
-                () =>
-                {
-                    GameObject.Destroy(View.gameObject);
+                () => {
+                    View.localScale = originScale;
+                    BoardResources.Return(View);
                     View = null;
                 }
                 );
@@ -132,7 +121,7 @@ public class Item
 
         if (View)
         {
-            GameObject.Destroy(View.gameObject);
+            BoardResources.Return(View);
             View = null;
         }
     }

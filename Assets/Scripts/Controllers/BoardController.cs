@@ -31,18 +31,18 @@ public class BoardController : MonoBehaviour
 
     private bool m_gameOver;
 
-    public void StartGame(GameManager gameManager, GameSettings gameSettings)
-    {
+    public void Initialize(GameManager gameManager, GameSettings gameSettings) {
         m_gameManager = gameManager;
-
         m_gameSettings = gameSettings;
-
-        m_gameManager.StateChangedAction += OnGameStateChange;
-
         m_cam = Camera.main;
+        m_gameManager.StateChangedAction += OnGameStateChange;
+    }
 
-        m_board = new Board(this.transform, gameSettings);
-
+    public void StartGame()
+    {
+        gameObject.SetActive(true);
+        m_board = new Board(this.transform, m_gameSettings);
+        m_gameOver = false;
         Fill();
     }
 
@@ -281,6 +281,7 @@ public class BoardController : MonoBehaviour
 
     internal void Clear()
     {
+        gameObject.SetActive(false);
         m_board.Clear();
     }
 
