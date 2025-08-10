@@ -19,20 +19,20 @@ public static class Utils {
         return normalTypes[URandom.Range(0, normalTypes.Length)];
     }
 
-    public static NormalItem.eNormalType GetRandomNormalTypeExcept(NormalItem.eNormalType[] types)
+    public static NormalItem.eNormalType GetRandomNormalTypeExcept(List<NormalItem.eNormalType> exceptions)
     {
         int count = 0;
-        foreach (NormalItem.eNormalType type in normalTypes) {
+        foreach (NormalItem.eNormalType t in normalTypes) {
             bool valid = true;
-            foreach (NormalItem.eNormalType t in types) {
-                if (type == t) {
+            foreach (NormalItem.eNormalType e in exceptions) {
+                if (t == e) {
                     valid = false;
                     break;
                 }
             }
 
             if (valid) {
-                tmpBuffer[count++] = type;
+                tmpBuffer[count++] = t;
             }
         }
         return tmpBuffer[URandom.Range(0, count)];

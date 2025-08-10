@@ -97,14 +97,15 @@ public class Board
                     }
                 }
 
-                var type = Utils.GetRandomNormalTypeExcept(types.ToArray());
-                originalTypes[x, y] = type;
+                var type = Utils.GetRandomNormalTypeExcept(types);
                 item.SetType(type);
                 item.SetView();
                 item.SetViewRoot(m_root);
 
                 cell.Assign(item);
                 cell.ApplyItemPosition(false);
+                
+                originalTypes[x, y] = type;
             }
         }
     }
@@ -153,6 +154,26 @@ public class Board
 
     internal void FillGapsWithNewItems()
     {
+        Dictionary<NormalItem.eNormalType, int> typeCounts = new Dictionary<NormalItem.eNormalType, int>();
+        var allTypes = (NormalItem.eNormalType[])Enum.GetValues(typeof(NormalItem.eNormalType));
+        foreach (NormalItem.eNormalType type in allTypes) {
+            typeCounts[type] = 0;
+        }
+        
+        for (int x = 0; x < boardSizeX; x++)
+        {
+            for (int y = 0; y < boardSizeY; y++)
+            {
+                Cell cell = m_cells[x, y];
+                if (cell.IsEmpty) continue;
+
+                if (cell.Item is NormalItem ni)
+                {
+                    typeCounts[ni.ItemType]++;
+                }
+            }
+        }
+        
         for (int x = 0; x < boardSizeX; x++)
         {
             for (int y = 0; y < boardSizeY; y++)
@@ -162,12 +183,39 @@ public class Board
 
                 NormalItem item = new NormalItem();
 
-                item.SetType(Utils.GetRandomNormalType());
+                int minCount = int.MaxValue;
+                NormalItem.eNormalType preferredType = default;
+                foreach (var typeCount in typeCounts) {
+                    NormalItem.eNormalType type = typeCount.Key;
+                    
+                    if (cell.NeighbourUp != null) {
+                        if (cell.NeighbourUp.Item is NormalItem ni && type == ni.ItemType) continue;
+                    }
+                    if (cell.NeighbourRight != null) {
+                        if (cell.NeighbourRight.Item is NormalItem ni && type == ni.ItemType) continue;
+                    }
+                    if (cell.NeighbourBottom != null) {
+                        if (cell.NeighbourBottom.Item is NormalItem ni && type == ni.ItemType) continue;
+                    }
+                    if (cell.NeighbourLeft != null) {
+                        if (cell.NeighbourLeft.Item is NormalItem ni && type == ni.ItemType) continue;
+                    }
+                    
+                    int count = typeCount.Value;
+                    if (count < minCount) {
+                        preferredType = type;
+                        minCount = count;
+                    }
+                }
+                
+                item.SetType(preferredType);
                 item.SetView();
                 item.SetViewRoot(m_root);
 
                 cell.Assign(item);
                 cell.ApplyItemPosition(true);
+                
+                typeCounts[preferredType]++;
             }
         }
     }

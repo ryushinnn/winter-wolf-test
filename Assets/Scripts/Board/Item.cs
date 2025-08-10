@@ -86,10 +86,9 @@ public class Item
     internal virtual void ExplodeView()
     {
         if (View) {
-            var originScale = View.localScale;
             View.DOScale(0.1f, 0.1f).OnComplete(
                 () => {
-                    View.localScale = originScale;
+                    View.localScale = Vector3.one;
                     BoardResources.Return(View);
                     View = null;
                 }
